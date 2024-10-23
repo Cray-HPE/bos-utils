@@ -22,6 +22,10 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 
+"""
+BOS common library
+"""
+
 # Standard imports
 import datetime
 from functools import partial
