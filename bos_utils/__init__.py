@@ -22,4 +22,8 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 
+"""
+BOS common library
+"""
+
 from .utils import duration_to_timedelta, exc_type_msg, requests_retry_session
