@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 #
 # MIT License
 #
@@ -21,32 +22,23 @@
 # ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 #
-# If you wish to perform a local build, you will need to clone or copy the contents of the
-# cms-meta-tools repo to ./cms_meta_tools
+function check_py_binary
+{
+    local path
+    path="/usr/bin/python$1"
+    [[ -f ${path} && -x ${path} ]] && echo "${path}" && exit 0
+}
 
-runbuildprep:
-		./cms_meta_tools/scripts/runBuildPrep.sh
+if [[ $# -ne 1 ]]; then
+    echo "$0: ERROR: This script requires exactly 1 argument but received $#: $*"
+    exit 2
+elif [[ -z $1 ]]; then
+    echo "$0: ERROR: Argument to this script may not be blank"
+    exit 2
+fi
 
-lint:
-		./cms_meta_tools/scripts/runLint.sh
-
-pymod_build:
-		${PY_BIN} --version
-		${PY_BIN} -m pip install --upgrade --user pip build setuptools wheel
-		${PY_BIN} -m build --sdist
-		${PY_BIN} -m build --wheel
-
-pymod_lint_setup:
-		${PY_BIN} -m pip install --user pylint
-		${PY_BIN} -m pip install --user \
-			--trusted-host arti.hpc.amslabs.hpecorp.net \
-			--trusted-host artifactory.algol60.net \
-			--index-url https://arti.hpc.amslabs.hpecorp.net:443/artifactory/api/pypi/pypi-remote/simple \
-			--extra-index-url http://artifactory.algol60.net/artifactory/csm-python-modules/simple \
-			./dist/bos_utils*.whl 
-
-pymod_lint_errors:
-		${PY_BIN} -m pylint --py-version ${MIN_PY_VERSION} --errors-only bos_utils
-
-pymod_lint_full:
-		${PY_BIN} -m pylint --py-version ${MIN_PY_VERSION} --fail-under 9 bos_utils
+PY_VERSION="$1"
+check_py_binary "${PY_VERSION}"
+check_py_binary "${PY_VERSION//.}"
+echo "ERROR: Cannot find binary for python version $1"
+exit 1
