@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+## [0.1.2] - 2024-10-24
+
+### Added
 - Added other BOS team members to list of maintainers
+- Added missing type hint return value
 
 ## [0.1.1] - 2024-10-23
 

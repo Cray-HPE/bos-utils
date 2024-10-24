@@ -37,7 +37,7 @@ from requests_retry_session import requests_retry_session as base_requests_retry
 
 TIME_DURATION_PATTERN = re.compile(r"^(\d+?)(\D+?)$", re.M|re.S)
 
-def duration_to_timedelta(timestamp: str):
+def duration_to_timedelta(timestamp: str) -> datetime.timedelta:
     """
     Converts a <digit><duration string> to a timedelta object.
     """
