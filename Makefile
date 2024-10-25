@@ -24,6 +24,10 @@
 # If you wish to perform a local build, you will need to clone or copy the contents of the
 # cms-meta-tools repo to ./cms_meta_tools
 
+PYLINT_VENV ?= pylint-$(PY_VERSION)
+PYLINT_VENV_PYBIN ?= $(PYLINT_VENV)/bin/python3
+PIP_INSTALL_ARGS ?= --trusted-host arti.hpc.amslabs.hpecorp.net --trusted-host artifactory.algol60.net --index-url https://arti.hpc.amslabs.hpecorp.net:443/artifactory/api/pypi/pypi-remote/simple --extra-index-url http://artifactory.algol60.net/artifactory/csm-python-modules/simple
+
 runbuildprep:
 		./cms_meta_tools/scripts/runBuildPrep.sh
 
@@ -33,20 +37,18 @@ lint:
 pymod_build:
 		${PY_BIN} --version
 		${PY_BIN} -m pip install --upgrade --user pip build setuptools wheel
+		${PY_BIN} -m pip list --format freeze
 		${PY_BIN} -m build --sdist
 		${PY_BIN} -m build --wheel
 
 pymod_lint_setup:
-		${PY_BIN} -m pip install --user pylint
-		${PY_BIN} -m pip install --user \
-			--trusted-host arti.hpc.amslabs.hpecorp.net \
-			--trusted-host artifactory.algol60.net \
-			--index-url https://arti.hpc.amslabs.hpecorp.net:443/artifactory/api/pypi/pypi-remote/simple \
-			--extra-index-url http://artifactory.algol60.net/artifactory/csm-python-modules/simple \
-			./dist/bos_utils*.whl 
+		${PY_BIN} -m venv $(PYLINT_VENV)
+		$(PYLINT_VENV_PYBIN) -m pip install --upgrade $(PIP_INSTALL_ARGS) pip --no-cache
+		$(PYLINT_VENV_PYBIN) -m pip install --disable-pip-version-check $(PIP_INSTALL_ARGS) pylint ./dist/bos_utils*.whl
+		$(PYLINT_VENV_PYBIN) -m pip list --format freeze
 
 pymod_lint_errors:
-		${PY_BIN} -m pylint --py-version ${MIN_PY_VERSION} --errors-only bos_utils
+		$(PYLINT_VENV_PYBIN) -m pylint --errors-only bos_utils
 
 pymod_lint_full:
-		${PY_BIN} -m pylint --py-version ${MIN_PY_VERSION} --fail-under 9 bos_utils
+		$(PYLINT_VENV_PYBIN) -m pylint --fail-under 9 bos_utils
